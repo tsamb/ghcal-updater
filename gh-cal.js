@@ -61,17 +61,20 @@ function buildBashDateArray() {
   return output + ")";
 }
 
-function buildBashCountsArray() {
-  var output = "COUNTS_ARRAY=(";
-  output += getCountValues().join(" ");
-  return output + ")";
-}
-
 function getGitDates() {
   return $cal.find("rect").map(function(i, el) {
     var date = el.getAttribute("data-date")
     return date + "T11:38";
   }).get();
+}
+
+// once you have built your masterpiece by clicking on the calendar squares,
+// call these two functions to retrieve the arrays for the bash script
+
+function buildBashCountsArray() {
+  var output = "COUNTS_ARRAY=(";
+  output += getCountValues().join(" ");
+  return output + ")";
 }
 
 function buildGitDateArray() {

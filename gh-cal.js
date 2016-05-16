@@ -28,10 +28,21 @@ function getColor(count) {
   }
 }
 
-var $container = $("<div></div>").css({"z-index": 1000, margin: "auto", position: "absolute", top: 0, left: 0, bottom: 0, right: 0})
-var $cal = $("#contributions-calendar").clone().removeAttr('id');
-$container.html($cal);
-$("body").prepend($container);
+
+// // GitHub no longer uses jQuery as of May 2016. This needed to be rewritten in vanilla JS
+// var $container = $("<div></div>").css({"z-index": 1000, margin: "auto", position: "absolute", top: 0, left: 0, bottom: 0, right: 0})
+// var $cal = $("#contributions-calendar").clone().removeAttr('id');
+// $container.html($cal);
+// $("body").prepend($container);
+// getEventListeners(window.document).click[2].remove();
+
+// Vanilla JS version
+var container = document.createElement("div");
+container.style.cssText = 'z-index: 1000; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0';
+var cal = document.getElementById("contributions-calendar").cloneNode(true);
+cal.removeAttribute("id");
+container.appendChild(cal);
+document.body.insertBefore(container, document.body.firstChild);
 getEventListeners(window.document).click[2].remove();
 
 $cal.on("click", "rect", function(e) {

@@ -45,38 +45,41 @@ container.appendChild(cal);
 document.body.insertBefore(container, document.body.firstChild);
 getEventListeners(window.document).click[2].remove();
 
-$cal.on("click", "rect", function(e) {
-  var $rect = $(this);
-  var nextCount = getNextDataCount($rect.data("count"));
-  $rect.data("count", nextCount);
-  $rect.attr("data-count", nextCount);
-  $rect.attr("fill", getColor(nextCount));
+cal.addEventListener("click", function(e) {
+  if (e.target && e.target.tagName === "rect") {
+    var nextCount = getNextDataCount(parseInt(e.target.getAttribute("data-count")));
+    e.target.setAttribute("data-count", nextCount);
+    e.target.setAttribute("fill", getColor(nextCount));
+  }
 });
 
-function getDates() {
-  return $cal.find("rect").map(function(i, el) {
+function getMacDates() {
+  var rects = cal.querySelectorAll("rect");
+  return Array.prototype.map.call(rects, function(el, i) {
     var dateArray = el.getAttribute("data-date").split("-");
     return dateArray[1] + dateArray[2] + "1138" + dateArray[0].slice(2,4);
-  }).get();
+  });
+}
+
+function getGitDates() {
+  var rects = cal.querySelectorAll("rect");
+  return Array.prototype.map.call(rects, function(el, i) {
+    var date = el.getAttribute("data-date")
+    return date + "T11:38";
+  });
 }
 
 function getCountValues() {
-  return $cal.find("rect").map(function(i, el) {
+  var rects = cal.querySelectorAll("rect");
+  return Array.prototype.map.call(rects, function(el, i) {
     return el.getAttribute("data-count");
-  }).get();
+  });
 }
 
 function buildBashDateArray() {
   var output = "DATES_ARRAY=(";
   output += getDates().join(" ");
   return output + ")";
-}
-
-function getGitDates() {
-  return $cal.find("rect").map(function(i, el) {
-    var date = el.getAttribute("data-date")
-    return date + "T11:38";
-  }).get();
 }
 
 // once you have built your masterpiece by clicking on the calendar squares,
@@ -93,4 +96,3 @@ function buildGitDateArray() {
   output += getGitDates().join(" ");
   return output + ")";
 }
-

@@ -1,3 +1,44 @@
+function GHPainter() {
+  this.container = this.buildContainer();
+  this.cal = this.initCalendar();
+  this.drawContainer();
+  this.removeExistingListeners();
+  this.bindNewListeners();
+}
+
+GHPainter.prototype.buildContainer = function() {
+  var container = document.createElement("div");
+  container.style.cssText = 'z-index: 1000; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0';
+  return container;
+}
+
+GHPainter.prototype.initCalendar = function() {
+  var cal = document.getElementById("contributions-calendar").cloneNode(true);
+  cal.removeAttribute("id");
+  this.container.appendChild(cal);
+  return cal;
+}
+
+GHPainter.prototype.drawContainer = function() {
+  document.body.insertBefore(this.container, document.body.firstChild);
+}
+
+GHPainter.prototype.removeExistingListeners = function() {
+  getEventListeners(window.document).click[2].remove();
+}
+
+GHPainter.prototype.bindNewListeners = function() {
+  this.cal.addEventListener("click", function(e) {
+    if (e.target && e.target.tagName === "rect") {
+      var nextCount = getNextDataCount(parseInt(e.target.getAttribute("data-count")));
+      e.target.setAttribute("data-count", nextCount);
+      e.target.setAttribute("fill", getColor(nextCount));
+    }
+  });  
+}
+
+var painter = new GHPainter;
+
 // copy and paste the following code into the Chrome console on your GH user profile
 
 function getNextDataCount(currentCount) {
@@ -28,33 +69,8 @@ function getColor(count) {
   }
 }
 
-
-// // GitHub no longer uses jQuery as of May 2016. This needed to be rewritten in vanilla JS
-// var $container = $("<div></div>").css({"z-index": 1000, margin: "auto", position: "absolute", top: 0, left: 0, bottom: 0, right: 0})
-// var $cal = $("#contributions-calendar").clone().removeAttr('id');
-// $container.html($cal);
-// $("body").prepend($container);
-// getEventListeners(window.document).click[2].remove();
-
-// Vanilla JS version
-var container = document.createElement("div");
-container.style.cssText = 'z-index: 1000; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0';
-var cal = document.getElementById("contributions-calendar").cloneNode(true);
-cal.removeAttribute("id");
-container.appendChild(cal);
-document.body.insertBefore(container, document.body.firstChild);
-getEventListeners(window.document).click[2].remove();
-
-cal.addEventListener("click", function(e) {
-  if (e.target && e.target.tagName === "rect") {
-    var nextCount = getNextDataCount(parseInt(e.target.getAttribute("data-count")));
-    e.target.setAttribute("data-count", nextCount);
-    e.target.setAttribute("fill", getColor(nextCount));
-  }
-});
-
 function getMacDates() {
-  var rects = cal.querySelectorAll("rect");
+  var rects = painter.cal.querySelectorAll("rect");
   return Array.prototype.map.call(rects, function(el, i) {
     var dateArray = el.getAttribute("data-date").split("-");
     return dateArray[1] + dateArray[2] + "1138" + dateArray[0].slice(2,4);
@@ -62,7 +78,7 @@ function getMacDates() {
 }
 
 function getGitDates() {
-  var rects = cal.querySelectorAll("rect");
+  var rects = painter.cal.querySelectorAll("rect");
   return Array.prototype.map.call(rects, function(el, i) {
     var date = el.getAttribute("data-date")
     return date + "T11:38";
@@ -70,7 +86,7 @@ function getGitDates() {
 }
 
 function getCountValues() {
-  var rects = cal.querySelectorAll("rect");
+  var rects = painter.cal.querySelectorAll("rect");
   return Array.prototype.map.call(rects, function(el, i) {
     return el.getAttribute("data-count");
   });

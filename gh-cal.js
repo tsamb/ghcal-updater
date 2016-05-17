@@ -1,98 +1,124 @@
 // copy and paste the following code into the Chrome console on your GH user profile
 
-function getNextDataCount(currentCount) {
-  if (currentCount === 0) {
-    return 1;
-  } else if (currentCount < 25) {
-    return 37;
-  } else if (currentCount < 50) {
-    return 62;
-  } else if (currentCount < 75) {
-    return 100;
-  } else if (currentCount >= 75) {
-    return 0;
-  }
+function GHPainter() {
+  this.container = this.buildContainer();
+  this.cal = this.initCalendar();
+  this.rects = this.buildRects();
+  this.drawContainer();
+  this.removeExistingListeners();
 }
 
-function getColor(count) {
-  if (count === 0) {
+GHPainter.prototype.buildContainer = function() {
+  var container = document.createElement("div");
+  container.style.cssText = 'z-index: 1000; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0';
+  return container;
+}
+
+GHPainter.prototype.initCalendar = function() {
+  var cal = document.getElementById("contributions-calendar").cloneNode(true);
+  cal.removeAttribute("id");
+  this.container.appendChild(cal);
+  return cal;
+}
+
+GHPainter.prototype.buildRects = function() {
+  var rects = this.cal.querySelectorAll("rect");
+  return Array.prototype.map.call(rects, function(el) {
+    return new Rect(el);
+  });
+}
+
+GHPainter.prototype.drawContainer = function() {
+  document.body.insertBefore(this.container, document.body.firstChild);
+}
+
+GHPainter.prototype.removeExistingListeners = function() {
+  getEventListeners(window.document).click[2].remove();
+}
+
+GHPainter.prototype.getGitDates = function() {
+  return this.rects.map(function(rect) {
+    return rect.gitDate();
+  });
+}
+
+GHPainter.prototype.getCountValues = function() {
+  return this.rects.map(function(rect) {
+    return rect.countDiff();
+  });
+}
+
+GHPainter.prototype.buildBashCountsArray = function() {
+  var output = "COUNTS_ARRAY=(";
+  output += this.getCountValues().join(" ");
+  return output + ")";
+}
+
+GHPainter.prototype.buildGitDatesArray = function() {
+  var output = "DATES_ARRAY=(";
+  output += this.getGitDates().join(" ");
+  return output + ")";
+}
+
+function Rect(el) {
+  this.el = el;
+  this.originalCount = this.setOriginalCount();
+  this.currentCount = this.originalCount;
+  this.bindClickListener();
+}
+
+Rect.prototype.setOriginalCount = function() {
+  return parseInt(this.el.getAttribute("data-count"));
+}
+
+Rect.prototype.countDiff = function() {
+  return this.currentCount - this.originalCount;
+}
+
+Rect.prototype.gitDate = function() {
+  return this.el.getAttribute("data-date") + "T11:38";
+}
+
+Rect.prototype.bindClickListener = function() {
+  this.el.addEventListener("click", function(e) {
+    if (e.target && e.target.tagName === "rect") {
+      this.cycleCurrentCount();
+    }
+  }.bind(this));
+}
+
+Rect.prototype.cycleCurrentCount = function() {
+  if (this.currentCount === 0) {
+    this.currentCount = 1;
+  } else if (this.currentCount < 25) {
+    this.currentCount = 37;
+  } else if (this.currentCount < 50) {
+    this.currentCount = 62;
+  } else if (this.currentCount < 75) {
+    this.currentCount = 100;
+  } else if (this.currentCount >= 75) {
+    this.currentCount = this.originalCount;
+  }
+  this.render();
+}
+
+Rect.prototype.render = function() {
+  this.el.setAttribute("data-count", this.currentCount);
+  this.el.setAttribute("fill", this.currentFill());
+}
+
+Rect.prototype.currentFill = function() {
+  if (this.currentCount === 0) {
     return "#eeeeee";
-  } else if (count < 25) {
+  } else if (this.currentCount < 25) {
     return "#D6E685";
-  } else if (count < 50) {
+  } else if (this.currentCount < 50) {
     return "#8CC665";
-  } else if (count < 75) {
+  } else if (this.currentCount < 75) {
     return "#44A340";
-  } else if (count >= 75) {
+  } else if (this.currentCount >= 75) {
     return "#1E6823";
   }
 }
 
-
-// // GitHub no longer uses jQuery as of May 2016. This needed to be rewritten in vanilla JS
-// var $container = $("<div></div>").css({"z-index": 1000, margin: "auto", position: "absolute", top: 0, left: 0, bottom: 0, right: 0})
-// var $cal = $("#contributions-calendar").clone().removeAttr('id');
-// $container.html($cal);
-// $("body").prepend($container);
-// getEventListeners(window.document).click[2].remove();
-
-// Vanilla JS version
-var container = document.createElement("div");
-container.style.cssText = 'z-index: 1000; margin: auto; position: absolute; top: 0; left: 0; bottom: 0; right: 0';
-var cal = document.getElementById("contributions-calendar").cloneNode(true);
-cal.removeAttribute("id");
-container.appendChild(cal);
-document.body.insertBefore(container, document.body.firstChild);
-getEventListeners(window.document).click[2].remove();
-
-cal.addEventListener("click", function(e) {
-  if (e.target && e.target.tagName === "rect") {
-    var nextCount = getNextDataCount(parseInt(e.target.getAttribute("data-count")));
-    e.target.setAttribute("data-count", nextCount);
-    e.target.setAttribute("fill", getColor(nextCount));
-  }
-});
-
-function getMacDates() {
-  var rects = cal.querySelectorAll("rect");
-  return Array.prototype.map.call(rects, function(el, i) {
-    var dateArray = el.getAttribute("data-date").split("-");
-    return dateArray[1] + dateArray[2] + "1138" + dateArray[0].slice(2,4);
-  });
-}
-
-function getGitDates() {
-  var rects = cal.querySelectorAll("rect");
-  return Array.prototype.map.call(rects, function(el, i) {
-    var date = el.getAttribute("data-date")
-    return date + "T11:38";
-  });
-}
-
-function getCountValues() {
-  var rects = cal.querySelectorAll("rect");
-  return Array.prototype.map.call(rects, function(el, i) {
-    return el.getAttribute("data-count");
-  });
-}
-
-function buildBashDateArray() {
-  var output = "DATES_ARRAY=(";
-  output += getDates().join(" ");
-  return output + ")";
-}
-
-// once you have built your masterpiece by clicking on the calendar squares,
-// call these two functions to retrieve the arrays for the bash script
-
-function buildBashCountsArray() {
-  var output = "COUNTS_ARRAY=(";
-  output += getCountValues().join(" ");
-  return output + ")";
-}
-
-function buildGitDateArray() {
-  var output = "DATES_ARRAY=(";
-  output += getGitDates().join(" ");
-  return output + ")";
-}
+var painter = new GHPainter;

@@ -13,16 +13,16 @@ GHPainter.prototype.buildContainer = function() {
 }
 
 GHPainter.prototype.initCalendar = function() {
-  var cal = document.getElementsByClassName("calendar-graph")//.cloneNode(true);
+  var cal = document.getElementsByClassName("calendar-graph")[0]//.cloneNode(true);
   var styles = document.createElement("style");
   styles.innerText = "@-webkit-keyframes gold-glow { from { box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FFDD1B, 0 0 70px #FFDD1B, 0 0 80px #FFDD1B, 0 0 100px #FFDD1B, 0 0 150px #FFDD1B; } to { box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FFDD1B, 0 0 35px #FFDD1B, 0 0 40px #FFDD1B, 0 0 50px #FFDD1B, 0 0 75px #FFDD1B; } }";
   document.head.appendChild(styles);
-  cal[0].querySelector("svg").style.cssText = "-webkit-animation: gold-glow 0.75s ease-in-out infinite alternate; -moz-animation: gold-glow 0.75s ease-in-out infinite alternate; animation: gold-glow 0.75s ease-in-out infinite alternate;";
+  cal.querySelector("svg").style.cssText = "-webkit-animation: gold-glow 0.75s ease-in-out infinite alternate; -moz-animation: gold-glow 0.75s ease-in-out infinite alternate; animation: gold-glow 0.75s ease-in-out infinite alternate;";
   return cal;
 }
 
 GHPainter.prototype.buildRects = function() {
-  var rects = this.cal[0].querySelectorAll("rect");
+  var rects = this.cal.querySelectorAll("rect");
   return Array.prototype.map.call(rects, function(el) {
     return new Rect(el);
   });

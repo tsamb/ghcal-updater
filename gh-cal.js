@@ -3,7 +3,6 @@
 function GHPainter() {
   this.cal = this.initCalendar();
   this.rects = this.buildRects();
-  this.removeExistingListeners();
 }
 
 GHPainter.prototype.buildContainer = function() {
@@ -30,10 +29,6 @@ GHPainter.prototype.buildRects = function() {
 
 GHPainter.prototype.drawContainer = function() {
   document.body.insertBefore(this.container, document.body.firstChild);
-}
-
-GHPainter.prototype.removeExistingListeners = function() {
-  getEventListeners(window.document).click[2].remove();
 }
 
 GHPainter.prototype.getGitDates = function() {
@@ -83,6 +78,7 @@ Rect.prototype.bindClickListener = function() {
   this.el.addEventListener("click", function(e) {
     if (e.target && e.target.tagName === "rect") {
       this.cycleCurrentCount();
+      e.stopPropagation();
     }
   }.bind(this));
 }

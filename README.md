@@ -4,9 +4,9 @@
 The GitHub Calendar Updater allows developers to draw 8-bit art on their GitHub profile calendar of commits. By following these instructions, you too can doodle on your GitHub profile!
 
 ### Getting Started
-In this repo, there are two files to pay attention to - gh-cal.js and ghcal.sh
+In this repo, there are two important files - `gh-cal.js` and `ghcal.sh`
 
-We begin with the contents of gh-cal.js
+We begin with the contents of `gh-cal.js`
 
 1.  Copy the entire contents of ```gh-cal.js```
 2.  Navigate to your GitHub profile using Chrome. ```https://github.com/YOUR_NAME_HERE```

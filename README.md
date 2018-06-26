@@ -13,6 +13,7 @@ We begin with the contents of `gh-cal.js`
 3.  Once your profile is loaded, open the Chrome JavaScript Console.
   
   (View --> Developer --> JavaScript Console -OR- CMD+Option+J on OSX)
+
 4.  Paste the entire contents of ```gh-cal.js``` into your JavaScript Console and press enter
 5.  Begin clicking on your GitHub profile calendar to create your 8-bit artwork! Clicking on a square cycles through 5 levels of color - Gray, light green, medium green, dark green, and very dark green.
 6.  When you have completed your masterpiece, return to your JavaScript Console and paste the following commands in, following each by pressing ```Enter```:
